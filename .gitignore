@@ -6,3 +6,7 @@ data/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+
+pretrained_ckpt
+res10_300x300_ssd_iter_140000.caffemodel
+deploy.prototxt.txt
