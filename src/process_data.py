@@ -56,6 +56,9 @@ def pad_to_square_dimensions(x, y, width, height):
     return x, y, width, height
 
 def crop_and_save_image(row):
+    '''
+    Get face coordinates and crop face from original image
+    '''
     region_shape_attributes = row.loc[Annotation.region_shape_attributes]
     region_shape_attributes = json.loads(region_shape_attributes)
 
@@ -83,6 +86,10 @@ def crop_and_save_image(row):
     return new_filename
 
 def get_attributes(row):
+    '''
+    Get relevant information in a concise and easy to use manner, namely filename, skin_tone, 
+    whether subject is smiling, color pixel value (if provided) and whether person is facing camera
+    '''
     attr = row.loc[Annotation.region_attributes]
     attr = json.loads(attr)
 
@@ -102,8 +109,11 @@ def get_attributes(row):
     return Attributes(new_filename, skin_tone, smiling, color, frontal)
 
 
-def process_data():
-    annotations = pd.read_csv(ANNOTATIONS_FILE_PATH)
+def process_data(path):
+    '''
+    Full pipeline of looping through rows in the csv file, cropping faces and extracting labels and attributes
+    '''
+    annotations = pd.read_csv(path)
     
     data_gen = annotations.iterrows()
     
@@ -111,9 +121,10 @@ def process_data():
 
     for i, row in data_gen:
         attr = get_attributes(row)
-
         if attr is not None:
             attributes_list.append(attr)
+
+        crop_and_save_image(row)
 
 
     attributes_df = pd.DataFrame(
@@ -124,12 +135,4 @@ def process_data():
     attributes_df.to_csv(PROCESSED_PATH / "attributes.csv", index=False)
 
 if __name__ == "__main__":
-    annotations = pd.read_csv(ANNOTATIONS_FILE_PATH)
-    
-    data_gen = annotations.iterrows()
-
-    # first_row = next(data_gen)[1]
-    # crop_and_save_image(first_row)
-    
-    for i, row in data_gen:
-        crop_and_save_image(row)
+    process_data(ANNOTATIONS_FILE_PATH)
