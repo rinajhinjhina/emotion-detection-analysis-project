@@ -11,4 +11,4 @@ pp = pprint.PrettyPrinter(indent=4)
 
 img = cv2.imread("data/processed/images/1_0.jpg")
 detector = FER()
-pp.pprint(detector.detect_emotions(img, ))
+pp.pprint(detector.detect_emotions(img))
